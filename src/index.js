@@ -23,11 +23,14 @@ function onSearch(e) {
   fetchCountries(inputName)
     .then(coutries => {
       if (coutries.length > 10) {
+        card.innerHTML = '';
+        list.innerHTML = '';
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
         return;
-      } else if (coutries.length > 1 && coutries.length < 10) {
+      } else if (coutries.length > 1 && coutries.length <= 10) {
+        card.innerHTML = '';
         createListCoutriesMurkup(coutries);
       } else {
         createListCoutriesMurkup(coutries);
@@ -51,13 +54,24 @@ function createListCoutriesMurkup(coutries) {
 }
 
 function createCardCoutryMurkup(coutries) {
-  const markup = coutries.map(({ capital, population, languages }) => {
-    const langList = Object.values(languages);
+  const markup = coutries.map(
+    ({
+      name: { official },
+      flags: { svg: flagSvg },
+      capital,
+      population,
+      languages,
+    }) => {
+      const langList = Object.values(languages);
 
-    return `<p>${capital}</p>
-  <p>${population}</p>
-  <p>${langList}</p>`;
-  });
+      return `
+     <img src="${flagSvg}" alt="${official}" width="100">
+     <p>${official}</p>
+    <p>${capital}</p>
+    <p>${population}</p>
+    <p>${langList}</p>`;
+    }
+  );
 
   card.innerHTML = markup.join(' ');
 }
