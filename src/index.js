@@ -15,15 +15,13 @@ input.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(e) {
   const inputName = input.value.trim();
   if (!inputName) {
-    console.log('ПУСТОЙ');
     list.innerHTML = '';
 
     return;
   }
-  console.log('НЕ ПУСТОЙ');
+
   fetchCountries(inputName)
     .then(coutries => {
-      console.log(coutries);
       if (coutries.length > 10) {
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
@@ -36,18 +34,10 @@ function onSearch(e) {
         createCardCoutryMurkup(coutries);
       }
     })
-    .catch();
+    .catch(() => {
+      Notiflix.Notify.failure('Oops, there is no country with that name');
+    });
 }
-
-// { countries => {
-//   countries.map({
-//     name: { official },
-//     capital,
-//     population,
-//     flags: { svg: flagSvg },
-//     languages,
-//   });
-// };}
 
 function createListCoutriesMurkup(coutries) {
   const markup = coutries.map(
@@ -56,6 +46,7 @@ function createListCoutriesMurkup(coutries) {
   <p>${official}</p>
 </li>`
   );
+
   list.innerHTML = markup.join(' ');
 }
 
@@ -67,5 +58,6 @@ function createCardCoutryMurkup(coutries) {
   <p>${population}</p>
   <p>${langList}</p>`;
   });
+
   card.innerHTML = markup.join(' ');
 }

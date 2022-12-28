@@ -11,9 +11,3 @@ export const fetchCountries = function (name) {
     return resp.json();
   });
 };
-
-//     name: { official },
-//     capital,
-//     population,
-//     flags: { svg: flagSvg },
-//     languages,
