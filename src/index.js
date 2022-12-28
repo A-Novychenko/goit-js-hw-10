@@ -10,49 +10,48 @@ const input = document.querySelector('#search-box');
 const list = document.querySelector('.country-list');
 const card = document.querySelector('.country-info');
 
-input.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 document.body.style.backgroundImage = `url(https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Flag-map_of_the_world.svg/1920px-Flag-map_of_the_world.svg.png)`;
+
+input.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
   const inputName = input.value.trim();
   if (!inputName) {
-    list.innerHTML = '';
+    clearMarkup();
     document.body.style.backgroundImage = `url(https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Flag-map_of_the_world.svg/1920px-Flag-map_of_the_world.svg.png)`;
 
     return;
   }
 
   fetchCountries(inputName)
-    .then(coutries => {
+    .then(countries => {
       document.body.style.backgroundImage = `url(https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Flag-map_of_the_world.svg/1920px-Flag-map_of_the_world.svg.png)`;
 
-      if (coutries.length > 10) {
-        card.innerHTML = '';
-        list.innerHTML = '';
+      if (countries.length > 10) {
+        clearMarkup();
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
 
         return;
-      } else if (coutries.length > 1 && coutries.length <= 10) {
+      } else if (countries.length > 1 && countries.length <= 10) {
         card.innerHTML = '';
-        // document.body.style.backgroundImage = `none`;
 
-        createListCoutriesMurkup(coutries);
+        createListcountriesMurkup(countries);
       } else {
         list.innerHTML = '';
-        createCardCoutryMurkup(coutries);
+        createCardCoutryMurkup(countries);
       }
     })
     .catch(() => {
       Notiflix.Notify.failure('Oops, there is no country with that name');
-      list.innerHTML = '';
+      clearMarkup();
       document.body.style.backgroundImage = `url(https://img.freepik.com/free-vector/oops-404-error-with-a-broken-robot-concept-illustration_114360-5529.jpg?w=826&t=st=1672246439~exp=1672247039~hmac=40e8c5bf1f5e1f11c7b8a188661ba7ce89c1d7a27681fa5bed3612be9d1eb9e6)`;
     });
 }
 
-function createListCoutriesMurkup(coutries) {
-  const markup = coutries.map(
+function createListcountriesMurkup(countries) {
+  const markup = countries.map(
     ({ name: { official }, flags: { svg: flagSvg } }) => `<li>
   <img src="${flagSvg}" alt="${official}" width="100">
   <p>${official}</p>
@@ -62,8 +61,8 @@ function createListCoutriesMurkup(coutries) {
   list.innerHTML = markup.join(' ');
 }
 
-function createCardCoutryMurkup(coutries) {
-  const markup = coutries.map(
+function createCardCoutryMurkup(countries) {
+  const markup = countries.map(
     ({
       name: { official },
       flags: { svg: flagSvg },
@@ -87,4 +86,9 @@ function createCardCoutryMurkup(coutries) {
   );
 
   card.innerHTML = markup.join(' ');
+}
+
+function clearMarkup() {
+  list.innerHTML = '';
+  card.innerHTML = '';
 }
